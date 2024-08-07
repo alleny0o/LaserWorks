@@ -1,0 +1,160 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  width: 100%;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.stepContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: rgba(62, 89, 67, 0.3) 0px 0px 0px 2px;
+}
+
+.stepTitleContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.stepTitleContainer h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.removeStepButton {
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.removeStepButton:hover {
+  background-color: #ff4b4b;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.select,
+.input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.errorMessage {
+  margin-top: -4px;
+  font-size: 12px;
+  color: rgb(192, 74, 74);
+}
+
+.detailTitle,
+.optionTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detailContainer,
+.optionContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.removeDetailButton,
+.removeOptionButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.removeDetailButton .trashIcon,
+.removeOptionButton .trashIcon {
+  font-size: 20px;
+  color: #4a4a4a; /* Dark gray color */
+}
+
+.removeDetailButton:hover .trashIcon,
+.removeOptionButton:hover .trashIcon {
+  color: #2f2f2f; /* Darker gray on hover */
+}
+
+.detailInnerContainer {
+  display: flex;
+  column-gap: 8px;
+}
+
+.optionsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.checkboxContainer {
+  display: flex;
+  align-items: center;
+}
+
+.checkboxContainer input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.addButton {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  align-self: flex-start;
+}
+
+.addButton:hover {
+  background-color: #45a049;
+}
+
+.noOptionsText {
+  font-size: 14px;
+  color: #666666;
+}
+
+.checkboxInnerContainer {
+  display: flex;
+  column-gap: 5px;
+}
+
+@media (max-width: 600px) {
+  .optionsGrid {
+    grid-template-columns: 1fr;
+  }
+}

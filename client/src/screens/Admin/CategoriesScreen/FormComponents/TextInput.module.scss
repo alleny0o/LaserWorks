@@ -1,0 +1,51 @@
+// TextInput.module.scss
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+  width: 95%;
+  margin-left: auto; 
+  margin-right: auto;
+}
+
+.label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.input {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: linear-gradient(145deg, #f3f3f3, #e0e0e0);
+  transition: border-color 0.3s, box-shadow 0.3s;
+
+  &:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: none;
+    background: linear-gradient(145deg, #ffffff, #dcdcdc);
+  }
+}
+
+.errorMessage {
+  margin-top: 4px;
+  font-size: 13px;
+  color: rgb(192, 74, 74);
+}
+
+.requiredStar {
+  color: rgb(192, 74, 74);
+}

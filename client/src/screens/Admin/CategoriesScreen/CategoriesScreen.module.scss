@@ -1,0 +1,121 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.formTitle {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.mainContainer {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #ebebeb;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 45px 20px;
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: minmax(250px, 3fr) 4fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas: 
+    "createCategory allCategories"
+    "slugExplanation allCategories";
+  column-gap: 30px;
+  row-gap: 35px;
+}
+
+.container > div {
+  background-color: white; 
+  padding: 10px;
+  border-radius: 15px;
+  box-shadow: inset 0px 1px 1px 0px rgba(255, 255, 255, 0.1), 0px 50px 100px -20px rgba(50, 50, 93, 0.25), 0px 30px 60px -30px rgba(0, 0, 0, 0.3);
+}
+
+.slugContainer {
+  grid-area: slugExplanation;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-left: 4px solid #bacfb4;
+
+  h4 {
+    margin-bottom: 10px;
+    color: rgb(0, 0, 0);
+  }
+
+  p {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+  }
+
+  .example {
+    display: block;
+    background-color: #e9ecef;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #495057;
+  }
+}
+
+.formContainer {
+  grid-area: createCategory;
+  display: flex;
+  flex-direction: column;
+}
+
+.allCategories {
+  grid-area: allCategories;
+  max-height: calc(100vh - 90px);
+  overflow-y: auto;
+}
+
+.buttonContainer {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.submitButton {
+  margin-top: 30px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  background-color: #c7c7c7;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s, box-shadow 0.3s;
+
+  &:hover {
+    background-color: #aeaeae;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+
+  &:active {
+    background-color: #c0c0c0;
+  }
+}
+
+@media (max-width: 1200px) {
+  .container {
+    grid-template-columns: 1fr;
+    grid-template-areas: 
+      "slugExplanation"
+      "createCategory"
+      "allCategories";
+  }
+}
