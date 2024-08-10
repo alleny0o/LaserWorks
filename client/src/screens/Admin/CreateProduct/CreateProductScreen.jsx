@@ -1,203 +1,125 @@
-import styles from "./CreateProductScreen.module.scss";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
+import { Box, Container, Button, Flex } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
-import * as Yup from "yup";
-import { useDispatch, useSelector } from "react-redux";
-import { getAllProductTypes, createProduct } from "../../../redux/actions/productActions";
-import { getAllCategories } from "../../../redux/actions/categoryActions";
-import { toast } from 'react-toastify';
-import ProductDetailsForm from './ProductDetailsForm';
-import MediaUploadSection from './MediaUploadSection';
+
+// utils
+import { steps } from "./utilities/steps";
+import { initialValues } from "./utilities/initialValues";
+
+// components
+import TabComponent from "./Components/TabComponent";
 
 const CreateProductScreen = () => {
-  const [selectedProductTypeName, setSelectedProductTypeName] = useState("");
-  const formikRef = useRef();
+  const [activeStep, setActiveStep] = useState(0);
+  const [completedSteps, setCompletedSteps] = useState([]);
 
-  const dispatch = useDispatch();
-  const { productTypes } = useSelector((state) => state.product);
-  const { categories } = useSelector((state) => state.category);
-
-  useEffect(() => {
-    dispatch(getAllProductTypes());
-    dispatch(getAllCategories());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (formikRef.current) {
-      formikRef.current.setFieldValue("customization", []);
+  const handleFileChange = (newFiles, setFieldValue) => {
+    setFieldValue("files", newFiles);
+    if (newFiles.length === 0) {
+      setFieldValue("thumbnail", null);
     }
-    if (selectedProductTypeName === "Customized Product") {
-      formikRef.current.setFieldValue("customization", [
-        {
-          fieldType: "",
-          label: "",
-          isRequired: "Yes",
-          moreDetails: [],
-          options: [{ text: "", isDisabled: false }],
-        },
-      ]);
-    }
-  }, [selectedProductTypeName]);
-
-  const initialValues = {
-    name: "",
-    productType: "",
-    price: "",
-    discountPrice: "",
-    categories: [],
-    thumbnail: null,
-    files: [],
-    customization: [],
   };
 
-  const validationSchema = Yup.object({
-    name: Yup.string().required("Product name is required"),
-    productType: Yup.string().required("Must select Product Type"),
-    price: Yup.number()
-      .positive("Price must be positive")
-      .required("Price is required"),
-    discountPrice: Yup.number()
-      .positive("Discount price must be positive")
-      .test(
-        "is-less-than-price",
-        "Discount price should be less than regular price",
-        function (value) {
-          return !value || value < this.parent.price;
-        }
-      ),
-    categories: Yup.array().of(Yup.string()),
-    files: Yup.array()
-      .min(1, "Please upload at least one image")
-      .test("has-image", "Please upload at least one image", function (value) {
-        return value && value.some((file) => file.type.startsWith("image/"));
-      }),
-    thumbnail: Yup.number()
-      .nullable()
-      .test(
-        "thumbnail-required",
-        "Please select a thumbnail image",
-        function (value) {
-          return this.parent.files.length === 0 || value !== null;
-        }
-      ),
-    customization: Yup.array().of(
-      Yup.object().shape({
-        fieldType: Yup.string().required("Type of input is required"),
-        label: Yup.string().required("Description is required"),
-        isRequired: Yup.string().required("Must choose this option"),
-        moreDetails: Yup.array().of(
-          Yup.object().shape({
-            text: Yup.string()
-          })
-        ),
-        options: Yup.array().of(
-          Yup.object().shape({
-            text: Yup.string(),
-            isDisabled: Yup.boolean()
-          })
-        )
-      })
-    )
-  });
+  const handleStepChange = async (index, values, setFieldTouched) => {
+    const currentStepSchema = steps[activeStep].validationSchema;
+    const isValid = await validateStep(values, currentStepSchema);
 
-  const handleSubmit = async (values, { setSubmitting, setFieldError, resetForm }) => {
-    console.log("Form submitted with values:", values);
-    const formData = new FormData();
-    formData.append("name", values.name);
-    formData.append("productType", values.productType);
-    formData.append("price", values.price);
-  
-    if (values.discountPrice) {
-      formData.append("discountPrice", values.discountPrice);
+    if (isValid) {
+      setActiveStep(index);
+      if (!completedSteps.includes(activeStep)) {
+        setCompletedSteps([...completedSteps, activeStep]);
+      }
     } else {
-      formData.append("discountPrice", -1);
+      Object.keys(currentStepSchema.fields).forEach((field) => {
+        setFieldTouched(field, true);
+      });
     }
-  
-    if (values.categories) {
-      formData.append("categories", JSON.stringify(values.categories));
-    } else {
-      formData.append("categories", JSON.stringify([]));
-    }
-  
-    values.files.forEach(file => {
-      formData.append('medias', file);
-    });
-  
-    if (values.thumbnail !== null) {
-      formData.append('thumbnail', values.thumbnail);
-    }
-  
-    if (values.customization && values.customization.length > 0) {
-      formData.append('customization', JSON.stringify(values.customization));
-    } else {
-      formData.append('customization', JSON.stringify([]));
-    }
-  
+  };
+
+  const validateStep = async (values, schema) => {
     try {
-      console.log("Attempting to dispatch createProduct");
-      setSubmitting(true);
-      await dispatch(createProduct(formData));
-      toast.success("Successfully created new product :)");
-      resetForm();
-      setSelectedProductTypeName("");
+      await schema.validate(values, { abortEarly: false });
+      return true;
     } catch (error) {
-      console.error('Error creating product:', error);
-      setFieldError('submit', 'Failed to create product. Please try again.');
-      toast.error("Failed to create product. Please try again. :(");
-    } finally {
-      setSubmitting(false);
+      return false;
     }
   };
+
+  const handleSubmit = (values, { setSubmitting }) => {};
 
   return (
-    <div className={styles.main__container}>
-      <Formik
-        innerRef={formikRef}
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
+    <Box width="100%" minHeight="100vh" bg='#ebebeb' pt={14} pb={12}>
+      <Container
+        w="85%"
+        maxW="4xl"
+        minHeight="500px"
+        bg="white"
+        p={4}
+        my={3}
+        boxShadow="md"
+        borderRadius="md"
+        display="flex"
+        flexDirection="column"
       >
-        {({
-          isSubmitting,
-          setFieldValue,
-          values,
-          errors,
-          touched,
-        }) => {
-          return (
-            <Form className={styles.container}>
-              <h1 className={styles.title}>Create Product Form</h1>
+        <Formik
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          validationSchema={steps[activeStep].validationSchema}
+        >
+          {({
+            values,
+            isSubmitting,
+            setFieldTouched,
+            setFieldValue,
+            errors,
+            touched,
+          }) => (
+            <Form style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+              <Box flexGrow={1}>
+                <TabComponent
+                  steps={steps}
+                  activeStep={activeStep}
+                  completedSteps={completedSteps}
+                  onTabChange={(index) =>
+                    handleStepChange(index, values, setFieldTouched)
+                  }
+                  formProps={{
+                    values,
+                    errors,
+                    touched,
+                    setFieldValue,
+                    handleFileChange,
+                  }}
+                />
+              </Box>
 
-              <MediaUploadSection
-                values={values}
-                setFieldValue={setFieldValue}
-                errors={errors}
-                touched={touched}
-              />
-
-              <ProductDetailsForm
-                productTypes={productTypes}
-                categories={categories}
-                selectedProductTypeName={selectedProductTypeName}
-                setSelectedProductTypeName={setSelectedProductTypeName}
-                setFieldValue={setFieldValue}
-                values={values}
-                errors={errors}
-                touched={touched}
-              />
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className={styles.submitButton}
-              >
-                Create Product
-              </button>
+              <Flex justify="flex-end" mt={4}>
+                {activeStep > 0 && (
+                  <Button
+                    isDisabled={activeStep === 0}
+                    onClick={() => setActiveStep(activeStep - 1)}
+                    mr={4}
+                  >
+                    Back
+                  </Button>
+                )}
+                {activeStep < steps.length - 1 ? (
+                  <Button
+                    onClick={() =>
+                      handleStepChange(activeStep + 1, values, setFieldTouched)
+                    }
+                  >
+                    Next
+                  </Button>
+                ) : (
+                  <Button type="submit" isLoading={isSubmitting}>Submit</Button>
+                )}
+              </Flex>
             </Form>
-          );
-        }}
-      </Formik>
-    </div>
+          )}
+        </Formik>
+      </Container>
+    </Box>
   );
 };
 

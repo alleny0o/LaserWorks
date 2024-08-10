@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import AdminSidebar from "../components/AdminSidebar";
 import styles from "./AdminLayout.module.scss";
+import { ChakraProvider } from "@chakra-ui/react";
 
 const AdminLayout = () => {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(window.innerWidth > 900);
@@ -43,7 +44,9 @@ const AdminLayout = () => {
               onClick={toggleSidebar}
             ></i>
           </div>
-          <Outlet className={styles.outlet} />
+          <ChakraProvider>
+            <Outlet className={styles.outlet} />
+          </ChakraProvider>
           <div className="footer"></div>
         </div>
       </main>

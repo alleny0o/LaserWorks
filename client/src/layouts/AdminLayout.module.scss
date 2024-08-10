@@ -51,6 +51,7 @@ $transition-time: 0.5s;
   align-items: center;
   justify-content: space-between;
   box-shadow: 0 6px 6px -4px rgba(0, 0, 0, 0.3);
+  z-index: 50;
 }
 
 @media only screen and (min-width: 901px) {
